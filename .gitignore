@@ -1,0 +1,6 @@
+qmp-shell
+pid.txt
+*.pyc
+*.bin
+*.flp
+

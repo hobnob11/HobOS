@@ -1,0 +1,8 @@
+{
+    "name": "Hob-OS",
+    "files": [ {
+        "directory": "/home/hobnob/HobOS/", 
+        "filters": ["*"],
+        "recursive": 1
+        } ]
+}
