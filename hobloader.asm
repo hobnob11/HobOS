@@ -13,7 +13,12 @@ start:
     
     mov si, text_string ; move the source register to the location of the string
     call print_string   ; :D
-    
+
+    mov ax, 1234         ; the number we want to print 
+    mov di, 0x80        ; where we want to put the string. 
+    call number_to_string
+    mov si, 0x80
+    call print_string
     jmp $               ; $ in NASM means "the current point of code", aka jump to the jump command aka infinate loop hype
 
     ;Vars
@@ -25,7 +30,7 @@ start:
 clear_screen:
     pusha               ; saves current registers to stack, so that we dont fuck over things.
     mov ax, 0x0600      ; scroll up, clear 
-    mov cx, 0x000         ; top left corner
+    mov cx, 0x000       ; top left corner
     mov dx, 0x1950      ; bottom right corner
     mov bh, 0x1f        ; colour
     int 0x10            ; call the bios interupt
@@ -68,6 +73,30 @@ print_string:
 .done:
     popa                ; put the regis back
     ret                 ; go back
+    
+number_to_string:       ; put number in ax, put memory location of string to return in di. 
+    pusha               ; dont fuck with the existing registers
+    
+.repeat:
+    mov cx, 10          ; div by 10.
+    mov dx, 0           ; reset the remainder
+    div cx              ; div ax by cx. put remainder in dx. 
+    
+    add dl, '0'         ; this adds the remainder to the ascii code for 0, giving us the correct ascii code
+    
+    mov [di], byte dl   ; put the ascii code for the digit into the memory location
+    add di, 1           ; inc the di for hte next digit
+    
+    cmp ax, 0           ; this means we are done.
+    je .done    
+    jmp .repeat
+
+.done:
+    mov [di], byte 0    ; terminate with a null byte :D    
+    popa
+    ret
+    
+    
     
     
     times 510-($-$$) db 0   ; Pad remainder of boot sector with 0s
