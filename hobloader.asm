@@ -84,9 +84,10 @@ number_to_string:       ; put number in ax, put memory location of string to ret
     div cx              ; div ax by cx. put remainder in dx. 
     
     add dl, '0'         ; this adds the remainder to the ascii code for 0, giving us the correct ascii code
-    
-    mov [di], byte dl   ; put the ascii code for the digit into the memory location
+
     sub di, 1           ; dec the di for hte next digit
+    mov [di], byte dl   ; put the ascii code for the digit into the memory location
+
     
     cmp ax, 0           ; this means we are done.
     je .done    
