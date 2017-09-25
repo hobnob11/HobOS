@@ -13,11 +13,11 @@ start:
     
     mov si, text_string ; move the source register to the location of the string
     call print_string   ; :D
-
+    
     mov ax, 1234         ; the number we want to print 
-    mov di, 0x80        ; where we want to put the string. 
+    mov di, 1024        ; where we want to put the string. 
     call number_to_string
-    mov si, 0x80
+    mov si, es
     call print_string
     jmp $               ; $ in NASM means "the current point of code", aka jump to the jump command aka infinate loop hype
 
@@ -76,6 +76,7 @@ print_string:
     
 number_to_string:       ; put number in ax, put memory location of string to return in di. 
     pusha               ; dont fuck with the existing registers
+    mov [di], byte 0    ; terminate with a null byte :D  
     
 .repeat:
     mov cx, 10          ; div by 10.
@@ -85,14 +86,14 @@ number_to_string:       ; put number in ax, put memory location of string to ret
     add dl, '0'         ; this adds the remainder to the ascii code for 0, giving us the correct ascii code
     
     mov [di], byte dl   ; put the ascii code for the digit into the memory location
-    add di, 1           ; inc the di for hte next digit
+    sub di, 1           ; dec the di for hte next digit
     
     cmp ax, 0           ; this means we are done.
     je .done    
     jmp .repeat
 
 .done:
-    mov [di], byte 0    ; terminate with a null byte :D    
+    mov es, di          ; points the "extra" segment register to the beginning of the string. 
     popa
     ret
     
